@@ -5,6 +5,7 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import FlashMessages from '@/Shared/FlashMessages.vue'
 import { Link } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
@@ -31,6 +32,9 @@ const showingNavigationDropdown = ref(false);
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
+                                </NavLink>
+                                <NavLink :href="route('posts.index')" :active="route().current('posts.index')">
+                                    Posts
                                 </NavLink>
                             </div>
                         </div>
@@ -115,6 +119,9 @@ const showingNavigationDropdown = ref(false);
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Dashboard
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('posts.index')" :active="route().current('posts.index')">
+                            Posts
+                        </ResponsiveNavLink>
                     </div>
 
                     <!-- Responsive Settings Options -->
@@ -145,6 +152,9 @@ const showingNavigationDropdown = ref(false);
 
             <!-- Page Content -->
             <main>
+                <div class="grid place-items-center">
+                    <flash-messages />
+                </div>
                 <slot />
             </main>
         </div>
