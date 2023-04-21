@@ -72,7 +72,7 @@ export default {
             this.formComment.post(`/comments/`, {
                 preserveScroll: true,
                 onSuccess: () => {
-                    this.formComment.reset(),
+                    this.formComment.reset()
                     this.cancelSendComment()
                 }
             })

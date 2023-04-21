@@ -13,7 +13,8 @@
                             <span class="text-indigo-400 font-medium">/</span>
                             <span class="text-ellipsis overflow-hidden">{{ form.title }}</span>
                         </h1>
-                        <div class="max-w-2xl bg-white rounded-md shadow overflow-hidden mr-6">
+
+                          <div class="max-w-2xl bg-white rounded-md shadow overflow-hidden mr-6">
                             <form @submit.prevent="update">
                                 <div class="flex flex-wrap -mb-8 -mr-6 p-8">
                                     <text-input v-model="form.title" :error="form.errors.title" class="pb-8 pr-6 w-full  mb-6" label="Title" />

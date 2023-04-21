@@ -17,6 +17,10 @@
                             <option value="only">Only Trashed</option>
                         </select>
                     </search-filter>
+                    <Link class="btn-indigo" href="/posts/create">
+                        <span>Create</span>
+                        <span class="hidden md:inline">&nbsp;Post</span>
+                    </Link>
                 </div>
 
                 <div class="bg-white rounded-md shadow overflow-x-auto">

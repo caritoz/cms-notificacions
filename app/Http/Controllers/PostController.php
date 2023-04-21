@@ -38,7 +38,7 @@ class PostController extends Controller
      */
     public function create()
     {
-//        return Inertia::render('Posts/Create');
+        return Inertia::render('Posts/Create');
     }
 
     /**
@@ -46,15 +46,9 @@ class PostController extends Controller
      */
     public function store(StorePostRequest $request)
     {
-        //
-    }
+        Post::create( array_merge($request->validated(), ['user_id' => Auth::user()->id ]) );
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Post $post)
-    {
-        //
+        return Redirect::back()->with('success', 'Post created.');
     }
 
     /**
@@ -84,6 +78,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $post->delete(); // check comments
+
+        return Redirect::back()->with('success', 'Post deleted.');
     }
 }
