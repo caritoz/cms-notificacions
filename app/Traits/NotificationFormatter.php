@@ -4,6 +4,7 @@
 
     use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\Date;
+    use Illuminate\Support\Str;
 
     trait NotificationFormatter
     {
@@ -15,7 +16,7 @@
         {
             return [
                 'message' => [
-                    'content'          => $content,
+                    'content'          => Str::limit($content, 80),
                     'slug'               => $this->getEntity()->slug,
                     'user'              => Auth::user()->only([
                         'id',

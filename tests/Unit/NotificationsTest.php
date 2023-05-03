@@ -12,6 +12,7 @@
     use Illuminate\Support\Facades\Event;
     use Illuminate\Support\Facades\Mail;
     use Illuminate\Support\Facades\Notification;
+    use Illuminate\Support\Str;
     use Tests\TestCase;
 
     class NotificationsTest extends TestCase
@@ -75,7 +76,7 @@
 
             // should trigger a notification after that
             Notification::assertSentTo($this->user, CommentPosted::class, function ($notification, $channels) use($title) {
-                $content = 'Comments have been posted on post "' . $title .'"';
+                $content = Str::limit('Comments have been posted on post "' . $title .'"', 80);
                 $this->assertContains('database', $channels);
 
                 $databaseNotification = $notification->toArray($this->user);

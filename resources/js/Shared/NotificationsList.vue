@@ -17,7 +17,10 @@ const notificationStore = useNotificationStore()
                     <button type="button" class="rounded-full bg-white p-1 text-gray-400 hover:text-gray-800 focus:outline-none focus:ring-1 focus:ring-gray focus:ring-offset-2 focus:ring-offset-gray-500">
                         <span class="sr-only">View notifications</span>
                         <BellIcon class="h-6 w-6" aria-hidden="true" v-if="notificationStore.isEmpty" />
-                        <BellAlertIcon class="h-6 w-6" aria-hidden="true" v-else />
+                        <div v-else>
+                            <BellAlertIcon class="h-6 w-6" aria-hidden="true" />
+                            <span class="absolute top-1.5 right-0 inline-block w-2 h-2 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full" v-if="notificationStore.notifications.filter(el => !el.read_at ).length>0"></span>
+                        </div>
                     </button>
                 </span>
         </template>

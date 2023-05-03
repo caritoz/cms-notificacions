@@ -1,7 +1,7 @@
 @component('mail::message')
 # You've got comments
 
-Comments on a post you've been writing <strong>{{$comment->commentable->name}}</strong> by <strong>{{$comment->user->name}}</strong>.
+<strong>{{$comment->user->name}}</strong> has written a comment on your post <strong>{{$comment->commentable->name}}</strong>.
 
 @component('mail::button', ['url' => route('posts.edit', $comment->commentable->id)])
 View comment

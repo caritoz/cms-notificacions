@@ -78,7 +78,9 @@ import pickBy from 'lodash/pickBy'
 import mapValues from 'lodash/mapValues'
 import SearchFilter from '@/Shared/SearchFilter.vue'
 import Icon from '@/Shared/Icon.vue'
-import Pagination from '@/Shared/Pagination.vue'
+// import Pagination from '@/Shared/Pagination.vue'
+import {defineAsyncComponent} from "vue";
+let Pagination = defineAsyncComponent(() => import("../../Shared/Pagination.vue"));
 
 export default {
     components: {
