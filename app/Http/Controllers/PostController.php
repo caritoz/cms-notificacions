@@ -9,6 +9,7 @@ use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class PostController extends Controller
@@ -75,12 +76,13 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         return Inertia::render('Posts/Edit', [
-            'post' => PostResource::make($post->load(['comments']))
+            'post' => $post->load(['user','comments'])
         ]);
     }
 
     /**
      * Update the specified resource in storage.
+     * @throws ValidationException
      */
     public function update(UpdatePostRequest $request, Post $post)
     {

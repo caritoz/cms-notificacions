@@ -54,7 +54,9 @@ import InputLabel from "@/Components/InputLabel.vue";
 export default {
     components: {
         InputLabel,
-        TextAreaInput, LoadingButton, TextInput,
+        TextAreaInput,
+        LoadingButton,
+        TextInput,
         AuthenticatedLayout,
         Head,
         Link
@@ -76,7 +78,8 @@ export default {
                 onSuccess: () => {
                     this.form.reset()
                     router.get('/posts')
-                }
+                },
+                onError: (e) => console.error(e)
             })
         }
     }

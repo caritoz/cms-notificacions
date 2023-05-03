@@ -80,7 +80,6 @@ export default {
 
     inheritAttrs:false,
 
-    // layout: Layout,
     props: {
         post: Object,
     },
@@ -108,7 +107,11 @@ export default {
 
     methods: {
         update() {
-            this.form.put(`/posts/${this.post.id}`)
+            this.form.put(`/posts/${this.post.id}`, {
+                preserveScroll: true,
+                onSuccess: () => console.log('Post updated'),
+                onError: (e) => console.error(e)
+            })
         },
         destroy() {
             if (confirm('Are you sure you want to delete this post?')) {
