@@ -11,17 +11,27 @@ use Illuminate\Validation\Rule;
 class CommentController extends Controller
 {
     /**
+     * Initialise the model's middleware through the constructor.
+     *
+     */
+    public function __construct()
+    {
+        $this->middleware('can:update,comment')->only('update');
+        $this->middleware('can:delete,comment')->only('destroy');
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'body'                      =>  ['required', 'string', 'min:2'],
-            'commentable_id'       =>  ['bail', 'required', 'numeric',  $request->has('commentable_id') && $request->commentable_id
+            'commentable_type'   =>  ['required', Rule::in(\App\Models\Comment::COMMENTABLE_MODELS)],
+            'commentable_id'       =>  ['required', 'numeric', $request->has('commentable_type') &&$request->has('commentable_id') && $request->commentable_id
                 ? Rule::in([( $entity = ($request->commentable_type)::find($request->commentable_id) )->id])
                 : []
             ],
-            'commentable_type'   =>  ['bail', 'required', Rule::in(\App\Models\Comment::COMMENTABLE_MODELS)],
             'parent_id'                =>  ['nullable', Rule::in(Comment::all()->pluck('id')->all())]
         ]);
 

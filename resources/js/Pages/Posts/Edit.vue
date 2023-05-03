@@ -15,10 +15,16 @@
                         </h1>
 
                           <div class="max-w-2xl bg-white rounded-md shadow overflow-hidden mr-6">
-                            <form @submit.prevent="update">
+                              <!-- If is not the Owner of the Post, just show it -->
+                              <div class="flex flex-wrap -mb-8 -mr-6 p-8" v-if="!isOwner">
+                                  <p class="pb-8 pr-6 w-full  mb-6">{{ post.title }}</p>
+                                  <div class="pb-8 pr-6 w-full mb-6">{{ post.body }}</div>
+                              </div>
+
+                              <!-- If is the Owner of the Post, can edit it -->
+                              <form @submit.prevent="update" v-else>
                                 <div class="flex flex-wrap -mb-8 -mr-6 p-8">
                                     <text-input v-model="form.title" :error="form.errors.title" class="pb-8 pr-6 w-full  mb-6" label="Title" />
-
                                     <text-area-input
                                         v-model="form.body"
                                         :error="form.errors.body"
@@ -42,7 +48,6 @@
                     </div>
 
                 </div>
-
         </div>
 
     </AuthenticatedLayout>
@@ -50,6 +55,8 @@
 </template>
 
 <script>
+import {clone} from "lodash";
+import {usePage} from "@inertiajs/vue3";
 import { Head, Link } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import TextInput from '@/Components/TextInput.vue';
@@ -70,11 +77,16 @@ export default {
         TrashedMessage,
         CommentIndex,
     },
+
+    inheritAttrs:false,
+
     // layout: Layout,
     props: {
         post: Object,
     },
+
     remember: 'form',
+
     data() {
         return {
             form: this.$inertia.form({
@@ -83,6 +95,17 @@ export default {
             }),
         }
     },
+
+    computed: {
+        isOwner(){
+            return this.post.user.id === usePage().props.auth.user.id
+        }
+    },
+
+    mounted() {
+        this.createCommentsChannel('Post', this.post);
+    },
+
     methods: {
         update() {
             this.form.put(`/posts/${this.post.id}`)
@@ -97,6 +120,60 @@ export default {
                 this.$inertia.put(`/posts/${this.post.id}/restore`)
             }
         },
+
+        createCommentsChannel(entityClass, entity) {
+
+            Echo.private(`comments.${entityClass}.${entity?.id}`).listen(
+                `CommentUpdatedEvent`,
+                (data) => {
+                    // comparison current user with others (because axios bug... for some reason doesnt send the properly headers by sockets -or pusher-php-server laravel package-)
+                    if (data?.user.id !== usePage().props.auth.user.id && data?.comment) {
+                        switch (data.action) {
+                            case 'add':
+                                this.addFetchingComment(data.comment)
+                                console.log('Comment received!')
+                                break
+                            case 'update':
+                                this.updateFetchingComment(data.comment)
+                                console.log('Comment updated!')
+                                break
+                            case 'remove':
+                                this.removeFetchingComment(data.comment)
+                                console.log('Comment removed!')
+                                break
+                        }
+                    }
+                }
+            )
+
+            console.log('Created comments channel!')
+        },
+
+        // NEEDS TO MOVE TO PINIA
+        addFetchingComment(payload) {
+            if (payload.parent_id) // needs to improve this recursive call for VUEX
+                this.post.comments = window._recursiveAddItem( clone(this.post.comments), payload)
+            else
+                this.post.comments.push(payload);
+        },
+        updateFetchingComment(payload){
+            if (payload.parent_id) // needs to improve this recursive call for VUEX
+                this.post.comments = window._recursiveUpdateItem( clone(this.post.comments), payload)
+            else {
+                Vue.set(
+                    this.post.comments,
+                    this.post.comments.findIndex(comment => comment.id === payload.id),
+                    payload
+                );
+            }
+        },
+        removeFetchingComment(payload){
+            if (payload.parent_id) // needs to improve this recursive call for VUEX
+                this.post.comments = window._recursiveRemoveItem( clone(this.post.comments), payload)
+            else
+                this.post.comments.splice(this.post.comments.findIndex(comment => comment.id === payload.id), 1);
+        },
+
     },
 }
 </script>

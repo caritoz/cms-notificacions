@@ -1,19 +1,31 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { cloneDeep } from "lodash";
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import FlashMessages from '@/Shared/FlashMessages.vue'
+import FlashMessages from '@/Shared/FlashMessages.vue';
 import { Link } from '@inertiajs/vue3';
+import NotificationsList from "@/Shared/NotificationsList.vue";
+
+import {usePage} from "@inertiajs/vue3";
+const user = usePage().props.auth.user;
+
+// set Notifications
+import {useNotificationStore} from "@/stores/NotificationStore";
+const notificationStore = useNotificationStore()
+notificationStore.fill( cloneDeep (user.notifications_formatted) )
 
 const showingNavigationDropdown = ref(false);
+
+onMounted( () => notificationStore.createUserChannel( cloneDeep(user)) )
 </script>
 
 <template>
     <div>
-        <div class="min-h-screen bg-gray-100">
+        <div class="min-h-screen bg-gray-100" id="dropdown">
             <nav class="bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,6 +52,12 @@ const showingNavigationDropdown = ref(false);
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
+
+                            <!-- Notifications Section -->
+                            <div class="ml-3 relative">
+                                <NotificationsList />
+                            </div>
+
                             <!-- Settings Dropdown -->
                             <div class="ml-3 relative">
                                 <Dropdown align="right" width="48">

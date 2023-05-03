@@ -1,7 +1,3 @@
-<script setup>
-import {usePage} from "@inertiajs/vue3";
-const user = usePage().props.auth.user;
-</script>
 <template>
     <div>
         <div v-html="comment.body" v-if="!editAction"></div>
@@ -21,7 +17,7 @@ const user = usePage().props.auth.user;
             <button
                 class="basis-1/4 text-blue-600 hover:underline"
                 @click="handleEvent('edit', comment)"
-                v-if="user.id === comment.user_id"
+                v-if="isOwner"
             >
                 Edit</button>
 
@@ -35,7 +31,7 @@ const user = usePage().props.auth.user;
             <button
                 class="basis-1/4 text-red-600 hover:underline"
                 @click="handleEvent('remove', comment)"
-                v-if="user.id === comment.user_id"
+                v-if="isOwner"
             >
                 Delete</button>
         </div>
@@ -64,27 +60,36 @@ const user = usePage().props.auth.user;
 </template>
 
 <script>
+import {usePage} from "@inertiajs/vue3";
 import {clone} from "lodash";
 import LoadingButton from "@/Shared/LoadingButton.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import CommentForm from "@/Pages/Comments/CommentForm.vue";
 export default {
     name: "Comment",
+    inheritAttrs:false,
+
     components: {
         CommentForm,
         PrimaryButton,
         LoadingButton
     },
-    inheritAttrs:false,
     props: {
         comment: Object|null,
     },
 
     data: () => ({
+        currentUser: {},
         currentComment: {},
         editAction: false,
         replyAction: false
     }),
+
+    computed: {
+        isOwner(){
+            return this.comment.user_id === usePage().props.auth.user.id;
+        },
+    },
 
     methods: {
         handleHideCommentForm() {

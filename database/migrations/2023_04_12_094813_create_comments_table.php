@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('commentable_type');
 
             $table->integer('parent_id')->nullable();
-
             $table->longText('body')->nullable();
 
             $table->foreign('user_id')

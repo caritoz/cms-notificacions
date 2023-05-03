@@ -16,15 +16,13 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+/***** PUBLIC ****/
+Route::get('/', [\App\Http\Controllers\HomeController::class, 'index']);
 
+Route::get('/posts/{post}/show', [\App\Http\Controllers\PostController::class, 'show'])
+        ->name('posts.show');
+
+/***** AUTHENTICATED ****/
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -38,24 +36,33 @@ Route::middleware('auth')->group(function () {
         ->name('profile.destroy');
 
     // posts
-    Route::get('/posts', [\App\Http\Controllers\PostController::class, 'index'])
-        ->name('posts.index');
-    Route::get('/posts/create', [\App\Http\Controllers\PostController::class, 'create'])
-        ->name('posts.create');
-    Route::post('/posts', [\App\Http\Controllers\PostController::class, 'store'])
-        ->name('posts.store');
-    Route::get('/posts/{post}/edit', [\App\Http\Controllers\PostController::class, 'edit'])
-        ->name('posts.edit');
-    Route::put('/posts/{post}', [\App\Http\Controllers\PostController::class, 'update'])
-        ->name('posts.update');
+    Route::prefix('posts')->group(function () {
+        Route::get('/', [\App\Http\Controllers\PostController::class, 'index'])
+            ->name('posts.index');
+
+        Route::get('/create', [\App\Http\Controllers\PostController::class, 'create'])
+            ->name('posts.create');
+        Route::post('/', [\App\Http\Controllers\PostController::class, 'store'])
+            ->name('posts.store');
+
+        Route::get('/{post}/edit', [\App\Http\Controllers\PostController::class, 'edit'])
+            ->name('posts.edit');
+        Route::put('/{post}', [\App\Http\Controllers\PostController::class, 'update'])
+            ->name('posts.update');
+
+        Route::delete('/{post}', [\App\Http\Controllers\PostController::class, 'destroy'])
+            ->name('posts.destroy');
+    });
 
     // comments
-    Route::post('comments', [\App\Http\Controllers\CommentController::class, 'store'])
-        ->name('comments.store');
-    Route::put('comments/{comment}', [\App\Http\Controllers\CommentController::class, 'update'])
-        ->name('comments.update');
-    Route::delete('comments/{comment}', [\App\Http\Controllers\CommentController::class, 'destroy'])
-        ->name('comments.destroy');
+    Route::prefix('comments')->group(function () {
+        Route::post('/', [\App\Http\Controllers\CommentController::class, 'store'])
+            ->name('comments.store');
+        Route::put('/{comment}', [\App\Http\Controllers\CommentController::class, 'update'])
+            ->name('comments.update');
+        Route::delete('/{comment}', [\App\Http\Controllers\CommentController::class, 'destroy'])
+            ->name('comments.destroy');
+    });
 });
 
 require __DIR__.'/auth.php';

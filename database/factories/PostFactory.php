@@ -21,9 +21,8 @@ class PostFactory extends Factory
             'user_id' => function(){
                 return User::factory()->create()->id;
             },
-            'title' => $this->faker->paragraph(1),
-            'body' => $this->faker->sentence(100)
-//            'body' => $this->faker->optional(0.2)->sentence(100)
+            'title' => $this->faker->realText(53),
+            'body' => $this->faker->realText(600)
         ];
     }
 }

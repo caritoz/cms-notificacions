@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Resources\PostResource;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
@@ -13,23 +14,40 @@ use Inertia\Inertia;
 class PostController extends Controller
 {
     /**
+     * Initialise the model's middleware through the constructor.
+     *
+     */
+    public function __construct()
+    {
+        $this->middleware('can:update,post')->only('update');
+        $this->middleware('can:delete,post')->only('destroy');
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()
     {
         return Inertia::render('Posts/Index', [
             'filters' => Request::all('search', 'trashed'),
-            'posts' => Auth::user()->posts()
+            'posts' => Post::query()
+                ->withCount('comments')
+                ->orderByDesc('comments_count')
                 ->orderByDesc('updated_at')
                 ->filter(Request::only('search', 'trashed'))
                 ->paginate(6)
                 ->withQueryString()
-                ->through(fn ($post) => [
-                    'id' => $post->id,
-                    'title' => $post->title,
-                    'updated_at' => $post->updated_at->format('M j, Y'),
-                    'deleted_at' => $post->deleted_at,
-                ]),
+                ->through(fn ($post) => PostResource::make($post)),
+        ]);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Post $post)
+    {
+        return Inertia::render('Posts/Show', [
+            'post' => PostResource::make($post)
         ]);
     }
 
@@ -48,7 +66,7 @@ class PostController extends Controller
     {
         Post::create( array_merge($request->validated(), ['user_id' => Auth::user()->id ]) );
 
-        return Redirect::back()->with('success', 'Post created.');
+        return redirect(route('posts.index'))->with('success', 'Post created.');
     }
 
     /**
@@ -57,7 +75,7 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         return Inertia::render('Posts/Edit', [
-            'post' => $post->load(['comments'])
+            'post' => PostResource::make($post->load(['comments']))
         ]);
     }
 
@@ -80,6 +98,6 @@ class PostController extends Controller
     {
         $post->delete(); // check comments
 
-        return Redirect::back()->with('success', 'Post deleted.');
+        return redirect(route('posts.index'))->with('success', 'Post deleted.');
     }
 }

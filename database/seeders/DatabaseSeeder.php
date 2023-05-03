@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $faker =\Faker\Factory::create();
+
         // \App\Models\User::factory(10)->create();
 
          $user = \App\Models\User::factory()->create([
@@ -24,17 +26,24 @@ class DatabaseSeeder extends Seeder
              'password' => Hash::make('secret')
          ]);
 
+        $user2 = \App\Models\User::factory()->create([
+            'name' => 'Sam Doe',
+            'email' => 'samdoe@example.com',
+            'password' => Hash::make('secret')
+        ]);
+
 //        User::factory(5)->create(['account_id' => $account->id]);
         $allUserIds = (User::factory(5)->create() )->pluck('id');;
 
-        $postIds = (Post::factory(100)
-            ->create(['user_id' => $user->id]) )->pluck('id');;
+        ( Post::factory(11)->create( ['user_id' => $user2->id] ) )->pluck('id');;
+
+        $postIds = (Post::factory(9)->create( ['user_id' => $user->id] ) )->pluck('id');;
         $post = $postIds->random();
 
         $commentModel = Comment::create([
             'user_id'               => $user->id,
             'parent_id'            => null,
-            'body'                  => 'Voluptatem asperiores ab cumque eligendi excepturi neque eligendi accusantium. Est vitae et velit veritatis aperiam accusantium doloribus.',
+            'body'                  => $faker->realText(100),
             'commentable_id'        => $post,
             'commentable_type'    =>  Post::class,
         ]);
@@ -42,9 +51,28 @@ class DatabaseSeeder extends Seeder
         $replyCommentModel = Comment::create([
             'user_id'               => $allUserIds->random(),
             'parent_id'            => $commentModel->id,
-            'body'                  => 'Debitis nesciunt ut et natus et dolor necessitatibus doloremque a molestiae ut eligendi est rerum excepturi natus non quibusdam voluptatibus',
+            'body'                  => $faker->realText(110),
             'commentable_id'        => $post,
             'commentable_type'    =>  Post::class,
+        ]);
+
+        $this->call([
+            NotificationTypesSeeder::class
+        ]);
+
+        // pre-settings
+        $user2->notificationSettings()->create( [
+            'notification_types_id' => 1,
+            'channel'   => ['mail', 'broadcast']
+        ]);
+        $user2->notificationSettings()->create( [
+            'notification_types_id' => 2,
+            'channel'   => ['broadcast']
+        ]);
+
+        $user->notificationSettings()->create( [
+            'notification_types_id' => 1,
+            'channel'   => [ 'broadcast']
         ]);
     }
 }

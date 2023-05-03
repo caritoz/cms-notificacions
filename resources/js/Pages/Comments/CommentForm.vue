@@ -2,6 +2,7 @@
     <form @submit.prevent="">
         <text-area-input
             v-model="formComment.body"
+            :error="formComment.errors.body"
             class="w-full h-44 max-h-40"
             label="Body"
         />
@@ -11,20 +12,21 @@
                 class="basis-1/4 text-gray-600 hover:underline"
                 @click="cancelSendComment"
             >Cancel</button>
-            <button
-                class="basis-1/4 text-blue-600 hover:underline"
+            <SecondaryButton
                 @click="sendComment"
-            >Send</button>
+            >Send</SecondaryButton>
         </div>
     </form>
 </template>
 
 <script>
 import TextAreaInput from "@/Shared/TextAreaInput.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
 
 export default {
     inheritAttrs:false,
     components: {
+        SecondaryButton,
         TextAreaInput
     },
     props: {
@@ -45,9 +47,10 @@ export default {
     data() {
         return {
             commentForm: {},
+            errors: {},
             formComment: this.$inertia.form({
                 body: this.replyAction? null : this.dummyComment?.body,
-                commentable_type: this.dummyComment ? this.dummyComment?.commentable_type: 'App\\Models\\Post',
+                commentable_type: this.dummyComment ? this.dummyComment?.commentable_type: 'App\\Models\\Post', // NEEDS TO IMPROVE
                 commentable_id: this.dummyComment ? this.dummyComment?.commentable_id : this.post.id,
                 parent_id: this.replyAction? this.dummyComment?.id : null,
             }),
@@ -55,6 +58,10 @@ export default {
     },
 
     methods: {
+        scrollToBottom() {
+            const container = document.querySelector('#comments');
+            container.scrollTop = container.scrollHeight;
+        },
         resetCommentForm() {
             this.commentForm = {}
         },
@@ -74,6 +81,7 @@ export default {
                 onSuccess: () => {
                     this.formComment.reset()
                     this.cancelSendComment()
+                    this.scrollToBottom()
                 }
             })
         },

@@ -1,6 +1,17 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import {onMounted, ref} from "vue";
+import {cloneDeep} from "lodash";
+
+import {usePage} from "@inertiajs/vue3";
+const user = usePage().props.auth.user;
+
+// set Notifications
+import {useNotificationStore} from "@/stores/NotificationStore";
+const notificationStore = useNotificationStore()
+notificationStore.fill( cloneDeep (user.notifications_formatted) )
+onMounted( () => notificationStore.createUserChannel( cloneDeep(user)) )
 </script>
 
 <template>

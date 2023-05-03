@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = ['title', 'body', 'user_id'];
 
@@ -34,6 +36,35 @@ class Post extends Model
         return $this->morphMany(Comment::class, 'commentable')->whereNull('parent_id')->orderBy('created_at');
     }
 
+    protected function slug(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => route( 'posts.edit', $this->id ),
+        );
+    }
+
+    /**
+     * Get the comments total
+     * @return Attribute
+     */
+    protected function totalComments(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->comments->count(),
+        );
+    }
+
+    // MUTATORS
+    /**
+     * @param $query
+     * @return void
+     */
+    public function scopeOrderByName($query)
+    {
+        $query->orderBy('title')->orderBy('body');
+    }
+
+    // mutators
     /**
      * @param $query
      * @param array $filters

@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Broadcast;
+    use Illuminate\Support\Facades\Auth;
+    use Illuminate\Support\Facades\Broadcast;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +16,8 @@ use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
+});
+
+Broadcast::channel('comments.{commentable_type}.{commentable_id}', function ($user, $commentable_type, $commentable_id) {
+    return Auth::check();
 });

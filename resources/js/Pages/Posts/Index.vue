@@ -26,16 +26,28 @@
                 <div class="bg-white rounded-md shadow overflow-x-auto">
                     <table class="w-full whitespace-nowrap">
                         <thead>
-                            <tr class="text-left font-bold">
-                                <th class="pb-4 pt-6 px-6">Title</th>
-                            </tr>
+                        <tr class="text-left font-bold">
+                            <th class="pb-4 pt-6 px-6">Title</th>
+                            <th class="pb-4 pt-6 px-6">Author</th>
+                            <th class="pb-4 pt-6 px-6">Total of Comments</th>
+                        </tr>
                         </thead>
                         <tbody>
                         <tr v-for="post in posts.data" :key="post.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
                             <td class="border-t">
                                 <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="`/posts/${post.id}/edit`">
                                     {{ post.title }}
-                                    <icon v-if="post.deleted_at" name="trash" class="flex-shrink-0 ml-2 w-3 h-3 fill-gray-400" />
+                                    <Icon v-if="post.deleted_at" name="trash" class="flex-shrink-0 ml-2 w-3 h-3 fill-gray-400" />
+                                </Link>
+                            </td>
+                            <td class="border-t">
+                                <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="`/posts/${post.id}/edit`">
+                                    {{ post.user.name }}
+                                </Link>
+                            </td>
+                            <td class="border-t">
+                                <Link class="flex items-center px-6 py-4 focus:text-indigo-500" :href="`/posts/${post.id}/edit`">
+                                    {{post.totalComments}}
                                 </Link>
                             </td>
                             <td class="border-t">
@@ -63,7 +75,9 @@ import { Head, Link } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import throttle from 'lodash/throttle'
 import pickBy from 'lodash/pickBy'
+import mapValues from 'lodash/mapValues'
 import SearchFilter from '@/Shared/SearchFilter.vue'
+import Icon from '@/Shared/Icon.vue'
 import Pagination from '@/Shared/Pagination.vue'
 
 export default {
@@ -72,12 +86,17 @@ export default {
         Head,
         Link,
         SearchFilter,
+        Icon,
         Pagination
     },
+
     props: {
         filters: Object,
         posts: Object
     },
+
+    inheritAttrs:false,
+
     data() {
         return {
             form: {

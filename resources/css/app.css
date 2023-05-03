@@ -8,10 +8,9 @@
 @tailwind utilities;
 
 /*@import "buttons.css";*/
-input, select, textarea, button, div, a {
-&:focus, &:active {
-              outline: none;
-          }
+input:focus, select:focus, textarea:focus, button:focus, div:focus, a:focus,
+input:active, select:active, textarea:active, button:active, div:active, a:active{
+    outline: none;
 }
 
 .btn-indigo {

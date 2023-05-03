@@ -1,66 +1,104 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CMS Notifications
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This is a Laravel project built using PHP 8, SQLite, Vite, VueJs 3 and Inertia. It also contains [Github Actions](https://docs.github.com/en/actions/learn-github-actions) with a simple configuration for [CI/CD](https://en.wikipedia.org/wiki/CI/CD) in [run-tests.yml](https://github.com/caritoz/mini-crm/blob/master/.github/workflows/run-tests.yml).
 
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
+* [Composer](http://getcomposer.org)
+* [Git](http://git-scm.com)
+* [PHP >= 8.1](http://php.net)
+* [Laravel v10 Support](https://laravel.com/docs/10.x)
+* [Pusher account](https://pusher.com/)
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
+## Installation
+1. Clone the repository:
+```
+git clone https://github.com/caritoz/cms-notificacions.git
+cd cms-notificacions
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```
+2. Install the PHP dependencies:
+```
+composer install
+```
+3. Install the NPM dependencies:
+```
+npm install
+```
+4. Create a SQLite database file:
+```
+touch database/database.sqlite
+```
+5. Set the configurations in the .env file, copy and generates application keys:
+```
+cp .env.example .env
+php artisan key:generate
+```
+7. Add your Pusher credentials to the .env file:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```
+BROADCAST_DRIVER=pusher
+PUSHER_APP_ID=your_app_id
+PUSHER_APP_KEY=your_app_key
+PUSHER_APP_SECRET=your_app_secret
+PUSHER_APP_CLUSTER=your_app_cluster
+```
+Replace your_app_id, your_app_key, your_app_secret, and your_app_cluster with your Pusher credentials. You can get these credentials from the Pusher dashboard.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+8. Finally, migrate the database, and run database seeds:
+```
+php artisan migrate --seed
+```
 
-## Laravel Sponsors
+## Development
+To start the development server, run:
+```
+npm run dev
+```
+This will start the Vite development server and compile the assets. The development server will watch for changes in your code and automatically reload the page.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+To run the PHP server (the output will give the address):
+```
+php artisan serve
+```
+This will start the PHP server and allow you to access the project at http://localhost:8000.
 
-### Premium Partners
+In Addition, to run the PHP jobs, run:
+```
+php artisan queue:work --queue=highest,high,default,low,lowest --tries=1
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+To deploy the project, you can follow the Laravel deployment guide. Make sure to configure your environment variables and set the correct permissions for the storage and bootstrap/cache directories.
 
-## Contributing
+You're ready to go! Visit CMS Notifications in your browser, and login with:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- **Username:** johndoe@example.com
+- **Password:** secret
 
-## Code of Conduct
+and open in other browser, and login with:
+- **Username:** samdoe@example.com
+- **Password:** secret
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Testing
+To run the tests, use the following command:
+```
+vendor/bin/pest
+```
+or you can run as well:
+```
+php artisan test
+```
+This will run all the tests located in the tests directory.
 
-## Security Vulnerabilities
+You can also run specific tests or test suites by specifying the file or directory path:
+```
+vendor/bin/pest tests/Unit/
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Contributions
+Contributions are welcome! Please create a pull request with your changes.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is licensed under the [GNU General Public License v3.0](https://github.com/caritoz/cms-notificacions/blob/main/LICENSE).
