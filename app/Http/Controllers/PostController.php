@@ -30,12 +30,12 @@ class PostController extends Controller
     public function index()
     {
         return Inertia::render('Posts/Index', [
-            'filters' => Request::all('search', 'trashed'),
+            'filters' => Request::all(['search', 'trashed']),
             'posts' => Post::query()
                 ->withCount('comments')
                 ->orderByDesc('comments_count')
                 ->orderByDesc('updated_at')
-                ->filter(Request::only('search', 'trashed'))
+                ->filter(Request::only(['search', 'trashed']))
                 ->paginate(6)
                 ->withQueryString()
                 ->through(fn ($post) => PostResource::make($post)),

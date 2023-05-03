@@ -13,18 +13,18 @@
 
                     <div class="max-w-2xl bg-white rounded-md shadow overflow-hidden mr-6">
                         <form @submit.prevent="store">
-                            <div class="flex flex-wrap -mb-8 -mr-6 p-8">
+                            <div class="flex flex-wrap mx-4 p-8">
                                 <text-input
                                     v-model="form.title"
                                     :error="form.errors.title"
                                     placeholder="Add a title …"
-                                    class="pb-8 pr-6 w-full  mb-6"
+                                    class="p-4 w-full mb-6"
                                 />
 
                                 <text-area-input
                                     v-model="form.body"
                                     :error="form.errors.body"
-                                    class="pb-8 pr-6 w-full h-44 max-h-40 mb-6"
+                                    class="p-4 w-full h-44 max-h-40"
                                     label="Body"
                                     placeholder="Add a content  …"
                                 />

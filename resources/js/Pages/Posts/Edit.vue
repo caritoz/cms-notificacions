@@ -16,19 +16,19 @@
 
                           <div class="max-w-2xl bg-white rounded-md shadow overflow-hidden mr-6">
                               <!-- If is not the Owner of the Post, just show it -->
-                              <div class="flex flex-wrap -mb-8 -mr-6 p-8" v-if="!isOwner">
+                              <div class="flex flex-wrap mx-4 p-8" v-if="!isOwner">
                                   <p class="pb-8 pr-6 w-full  mb-6">{{ post.title }}</p>
                                   <div class="pb-8 pr-6 w-full mb-6">{{ post.body }}</div>
                               </div>
 
                               <!-- If is the Owner of the Post, can edit it -->
                               <form @submit.prevent="update" v-else>
-                                <div class="flex flex-wrap -mb-8 -mr-6 p-8">
-                                    <text-input v-model="form.title" :error="form.errors.title" class="pb-8 pr-6 w-full  mb-6" label="Title" />
+                                <div class="flex flex-wrap mx-4 p-8">
+                                    <text-input v-model="form.title" :error="form.errors.title" class="p-4 w-full mb-6" label="Title" />
                                     <text-area-input
                                         v-model="form.body"
                                         :error="form.errors.body"
-                                         class="pb-8 pr-6 w-full h-44 max-h-40 mb-6"
+                                         class="p-4 w-full h-44 max-h-40"
                                          label="Body"
                                         />
                                 </div>

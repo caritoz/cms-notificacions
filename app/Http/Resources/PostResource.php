@@ -23,7 +23,7 @@ class PostResource extends JsonResource
             'user' => $this->user,
             'slug'  => $this->slug,
             'comments'  => $this->comments,
-            'totalComments' => $this->totalComments,
+            'totalComments' => $this->comments_count,
             'updated_at' => $this->updated_at->format('M j, Y'),
             'deleted_at' => $this->deleted_at,
         ];

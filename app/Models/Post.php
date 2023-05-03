@@ -36,6 +36,7 @@ class Post extends Model
         return $this->morphMany(Comment::class, 'commentable')->whereNull('parent_id')->orderBy('created_at');
     }
 
+    // MUTATORS AND ACCESSORS
     protected function slug(): Attribute
     {
         return Attribute::make(
@@ -54,7 +55,7 @@ class Post extends Model
         );
     }
 
-    // MUTATORS
+    // SCOPES
     /**
      * @param $query
      * @return void
@@ -64,7 +65,6 @@ class Post extends Model
         $query->orderBy('title')->orderBy('body');
     }
 
-    // mutators
     /**
      * @param $query
      * @param array $filters
