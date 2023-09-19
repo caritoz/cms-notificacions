@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Observers;
+    namespace App\Observers;
 
-use App\Events\CommentUpdatedEvent;
-use App\Models\Comment;
-use App\Services\NotificationsHandlerService;
-use Illuminate\Support\Facades\Auth;
+    use App\Contracts\NotificationsHandlerServiceContract as NotificationsService;
+    use App\Events\CommentUpdatedEvent;
+    use App\Models\Comment;
+    use Illuminate\Support\Facades\Auth;
 
 class CommentObserver
 {
@@ -15,6 +15,10 @@ class CommentObserver
      * @var bool
      */
 //    public $afterCommit = true;
+    public function __construct(
+        protected NotificationsService $notificationsService
+    ) {
+    }
 
     /**
      * Handle the Comment "created" event.
@@ -22,7 +26,7 @@ class CommentObserver
      * @param  \App\Models\Comment  $comment
      * @return void
      */
-    public function created(Comment $comment)
+    public function created(Comment $comment): void
     {
         $user = Auth::user();
 
@@ -30,7 +34,7 @@ class CommentObserver
         broadcast(new CommentUpdatedEvent($user, $comment, 'add'));
 
         // COMMENTS rule: Comments on a post you've been writing to
-        NotificationsHandlerService::sendIfCommentPosted($comment);
+        $this->notificationsService::sendIfCommentPosted($comment);
     }
 
     /**
@@ -39,19 +43,20 @@ class CommentObserver
      * @param  \App\Models\Comment  $comment
      * @return void
      */
-    public function updated(Comment $comment)
+    public function updated(Comment $comment): void
     {
         $user = Auth::user();
 
         broadcast(new CommentUpdatedEvent($user, $comment, 'update'));
     }
+
     /**
      * Handle the Comment "deleted" event.
      *
      * @param  \App\Models\Comment  $comment
      * @return void
      */
-    public function deleted(Comment $comment)
+    public function deleted(Comment $comment): void
     {
         $user = Auth::user();
 
@@ -64,7 +69,7 @@ class CommentObserver
      * @param  \App\Models\Comment  $comment
      * @return void
      */
-    public function forceDeleted(Comment $comment)
+    public function forceDeleted(Comment $comment): void
     {
         $user = Auth::user();
 

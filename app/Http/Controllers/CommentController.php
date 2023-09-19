@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Comment;
@@ -28,14 +29,14 @@ class CommentController extends Controller
         $validator = Validator::make($request->all(), [
             'body'                      =>  ['required', 'string', 'min:2'],
             'commentable_type'   =>  ['required', Rule::in(\App\Models\Comment::COMMENTABLE_MODELS)],
-            'commentable_id'       =>  ['required', 'numeric', $request->has('commentable_type') &&$request->has('commentable_id') && $request->commentable_id
+            'commentable_id'       =>  ['required', 'numeric', $request->has('commentable_type') && $request->has('commentable_id') && $request->commentable_id
                 ? Rule::in([( $entity = ($request->commentable_type)::find($request->commentable_id) )->id])
                 : []
             ],
             'parent_id'                =>  ['nullable', Rule::in(Comment::all()->pluck('id')->all())]
         ]);
 
-        if ( $validator->fails() ) {
+        if ($validator->fails()) {
             return Redirect::back()
                         ->withErrors($validator)
                         ->withInput();
@@ -46,7 +47,7 @@ class CommentController extends Controller
         );
 
         // check if the comment has a MENTION, then send a notification
-        if( $request->has('mentions') ){
+        if ($request->has('mentions')) {
            // $this->sendNotifications($request->mentions, $comment);
         }
 
@@ -58,9 +59,9 @@ class CommentController extends Controller
      */
     public function update(Request $request, Comment $comment)
     {
-        $comment->update( $request->validate([
+        $comment->update($request->validate([
             'body'  => ['required', 'string', 'min:2'],
-        ]) );
+        ]));
 
         return Redirect::back()->with('success', 'Comment updated.');
     }
@@ -82,8 +83,7 @@ class CommentController extends Controller
      */
     protected function sendNotifications(array $mentions, Comment $comment): void
     {
-        foreach (\App\Models\User::whereIn('id', $mentions)->where('id', '!=', Auth::id())->get() as $userMentioned)
-        {
+        foreach (\App\Models\User::whereIn('id', $mentions)->where('id', '!=', Auth::id())->get() as $userMentioned) {
 //            $userMentioned->notify(new \App\Notifications\CommentUserMentioned($comment));
         }
     }

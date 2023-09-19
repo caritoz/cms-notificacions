@@ -94,5 +94,4 @@ class ProfileController extends Controller
 
         return $notification;
     }
-
 }

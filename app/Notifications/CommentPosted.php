@@ -14,16 +14,17 @@ use Illuminate\Notifications\Notification;
 
 class CommentPosted extends Notification implements NotificationDataAccessor
 {
-    use Queueable, NotificationFormatter;
+    use Queueable;
+    use NotificationFormatter;
 
     /**
      * Create a new notification instance.
      */
     public function __construct(
         public Comment $comment
-    )
-    {
-        $this->comment = $comment->load('user', 'commentable');;
+    ) {
+        $this->comment = $comment->load('user', 'commentable');
+        ;
     }
 
     /**
@@ -41,7 +42,7 @@ class CommentPosted extends Notification implements NotificationDataAccessor
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject("You've got comments")
             ->markdown('emails.notifications.comment-posted', ['comment' => $this->comment]);
     }
@@ -54,7 +55,8 @@ class CommentPosted extends Notification implements NotificationDataAccessor
     public function toArray(object $notifiable): array
     {
         $format = 'Comments have been posted on post "%s"';
-        $content = sprintf($format,
+        $content = sprintf(
+            $format,
             $this->comment->commentable->title
         );
 
@@ -69,7 +71,7 @@ class CommentPosted extends Notification implements NotificationDataAccessor
      */
     public function toBroadcast($notifiable)
     {
-        return new BroadcastMessage( $this->setContent($notifiable) );
+        return new BroadcastMessage($this->setContent($notifiable));
     }
 
     /**

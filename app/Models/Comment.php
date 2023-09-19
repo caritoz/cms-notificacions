@@ -1,17 +1,20 @@
 <?php
 
-namespace App\Models;
+    namespace App\Models;
 
-use App\Traits\HasMentions;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
+    use App\Traits\HasMentions;
+    use Illuminate\Database\Eloquent\Casts\Attribute;
+    use Illuminate\Database\Eloquent\Factories\HasFactory;
+    use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Database\Eloquent\Relations\BelongsTo;
+    use Illuminate\Database\Eloquent\Relations\HasMany;
+    use Illuminate\Database\Eloquent\Relations\MorphTo;
+    use Illuminate\Support\Facades\Auth;
 
 class Comment extends Model
 {
-    use HasFactory, HasMentions;
+    use HasFactory;
+    use HasMentions;
 
     const COMMENTABLE_MODELS = [Post::class];
 
@@ -23,8 +26,8 @@ class Comment extends Model
      * @var array
      */
     protected $casts = [
-        'created_at'    => 'datetime',
-        'updated_at'    => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /**
@@ -44,25 +47,17 @@ class Comment extends Model
     /**
      * Get the parent commentable model (posts/).
      */
-    public function commentable(): \Illuminate\Database\Eloquent\Relations\MorphTo
+    public function commentable(): MorphTo
     {
         return $this->morphTo();
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function replies(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(Comment::class, 'parent_id');
     }
 
     /**
@@ -73,18 +68,26 @@ class Comment extends Model
         return $this->attributes['type'] = str_replace('App\\Models\\', '', $this->commentable_type);
     }
 
+    public function getMentionsAttribute()
+    {
+        return User::whereIn('id', $this->getMentions())->where('id', '!=', Auth::id())->get();
+    }
+
     /**
      * @return array
      */
     protected function threads(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->replies()->orderByDesc('updated_at')->get() ?? [],
+            get: fn() => $this->replies()->orderByDesc('updated_at')->get() ?? [],
         );
     }
 
-    public function getMentionsAttribute()
+    /**
+     * @return HasMany
+     */
+    public function replies(): HasMany
     {
-        return User::whereIn('id', $this->getMentions())->where('id', '!=', Auth::id())->get();
+        return $this->hasMany(Comment::class, 'parent_id');
     }
 }

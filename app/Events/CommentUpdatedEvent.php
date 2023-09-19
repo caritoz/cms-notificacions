@@ -15,15 +15,18 @@ use Illuminate\Queue\SerializesModels;
 
 class CommentUpdatedEvent implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, Queueable;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use Queueable;
 
     /**
      * Create a new event instance.
      */
-    public function __construct( public $user,
-                                 public Comment $comment,
-                                 public string $action
-    ){
+    public function __construct(
+        public $user,
+        public Comment $comment,
+        public string $action
+    ) {
         $this->comment  = $comment->load('user'); // silly!!!!!
 
         // should send notifications to another users but it seems like axios has an issue
@@ -37,6 +40,6 @@ class CommentUpdatedEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('comments.' . $this->comment->type. '.' . $this->comment->commentable_id);
+        return new PrivateChannel('comments.' . $this->comment->type . '.' . $this->comment->commentable_id);
     }
 }

@@ -24,7 +24,7 @@ class NotificationSettingsController extends Controller
 
         // Validation
         Validator::make($request->all(), [
-            '*.notification_types_id'   =>  ['required', 'integer', Rule::in( NotificationTypes::pluck('id')->all() )],
+            '*.notification_types_id'   =>  ['required', 'integer', Rule::in(NotificationTypes::pluck('id')->all())],
             '*.channel'                    =>  ['required', 'array', 'min: 1'],
             '*.channel.*'                  =>  ['string', Rule::in(NotificationTypes::TYPE_CHANNELS)],
         ])->validate();
@@ -33,7 +33,7 @@ class NotificationSettingsController extends Controller
         $user->notificationSettings()->delete();
 
         foreach ($request->all() as $notificationSetting) {
-            $user->notificationSettings()->create( $notificationSetting );
+            $user->notificationSettings()->create($notificationSetting);
         }
 
         return $user->notificationSettings;

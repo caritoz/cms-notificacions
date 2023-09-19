@@ -29,7 +29,6 @@ class CommentPolicy
      */
     public function create(User $user): bool
     {
-
     }
 
     /**

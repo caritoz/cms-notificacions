@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Models;
+    namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Database\Eloquent\Factories\HasFactory;
+    use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class NotificationSettings extends Model
 {
@@ -31,7 +32,8 @@ class NotificationSettings extends Model
      * @var array
      */
     protected $hidden = [
-        'created_at', 'updated_at',
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -42,14 +44,14 @@ class NotificationSettings extends Model
     protected $with = ['notificationTypes'];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
-    public function notificationTypes(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function notificationTypes(): BelongsTo
     {
         return $this->belongsTo(NotificationTypes::class);
     }
 
-    public function users()
+    public function users(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

@@ -4,10 +4,10 @@
 
     use App\Models\Post;
 
-    interface NotificationDataAccessor
-    {
-        /**
-         * @return mixed
-         */
-        public function getEntity(): Post;
-    }
+interface NotificationDataAccessor
+{
+    /**
+     * @return mixed
+     */
+    public function getEntity(): Post;
+}
